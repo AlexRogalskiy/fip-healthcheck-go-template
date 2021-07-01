@@ -53,4 +53,4 @@ RUN go build
 FROM debian:buster as release
 
 COPY --from=builder /app/cmd/example-check/example-check /example-check
-CMD ["/example-check"]
+ENTRYPOINT ["/example-check"]
