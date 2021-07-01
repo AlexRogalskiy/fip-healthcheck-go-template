@@ -50,7 +50,7 @@ license: check-docker
 	@docker build --no-cache --pull --target license -f build/builder/Dockerfile -t ${PROJECTNAME}:local-license .
 
 ## e2e-test: Execute e2e-tests
-e2e-test: check-docker check-kind check-kubectl check-bats build-release
+e2e-test: check-docker check-kind check-kubectl check-bats check-kustomize build-release
 	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release
 
 ## publish: Publish the container image

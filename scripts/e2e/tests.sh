@@ -26,19 +26,46 @@ info(){
     [ "$status" -eq 0 ]
 }
 
+@test "Prepare deploy" {
+    info
+    prep(){
+        cp deployments/kustomization/env_template deployments/kustomization/.env
+    }
+    run prep
+    [ "$status" -eq 0 ]
+}
+
 @test "Deploy" {
     info
     deploy(){
-        kubectl create job service-endpoints-check --image="${CONTAINER_IMAGE}"
+        kustomize build deployments/kustomization | kubectl apply -f -
     }
     run deploy
+    [ "$status" -eq 0 ]
+}
+
+@test "Use loaded image in the cronjob" {
+    info
+    mutate(){
+        kubectl set image cronjob/example-check example-check="${CONTAINER_IMAGE}"
+    }
+    run mutate
+    [ "$status" -eq 0 ]
+}
+
+@test "Create a job from the cronjob" {
+    info
+    mutate(){
+        kubectl create job example-check-1 --from cronjob/example-check
+    }
+    run mutate
     [ "$status" -eq 0 ]
 }
 
 @test "Check" {
     info
     check(){
-        kubectl wait --for=condition=complete --timeout=180s job/service-endpoints-check
+        kubectl wait --for=condition=complete --timeout=180s job/example-check-1
     }
     run check
     [ "$status" -eq 0 ]
