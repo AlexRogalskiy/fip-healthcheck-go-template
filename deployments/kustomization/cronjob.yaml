@@ -16,6 +16,10 @@ spec:
       template:
         spec:
           serviceAccountName: example-check
+          securityContext:
+            fsGroup: 999
+            runAsGroup: 999
+            runAsUser: 1001
           containers:
           - name: example-check
             image: registry.sighup.io/poc/example-check:latest

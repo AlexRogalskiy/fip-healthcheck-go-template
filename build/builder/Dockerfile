@@ -53,4 +53,11 @@ RUN go build
 FROM debian:buster as release
 
 COPY --from=builder /app/cmd/example-check/example-check /example-check
+
+RUN groupadd -r SIGHUP && \
+    useradd -u 1001 -r -s /bin/false -g SIGHUP cloud && \
+    chown cloud:SIGHUP /example-check
+
+USER 1001
+
 ENTRYPOINT ["/example-check"]
