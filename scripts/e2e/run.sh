@@ -6,18 +6,20 @@
 
 CLUSTER_ID=e2e-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 8 ; echo)
 KUBECONFIG=$(pwd)/kubeconfig
+CONTAINER_IMAGE="${1}"
+CLUSTER_VERSION="${2}"
 
 function cleanup {
   echo "  Destroying the cluster ${CLUSTER_ID}"
   kind delete cluster --name "${CLUSTER_ID}"
 }
 
-echo "  Creating the cluster ${CLUSTER_ID}"
-kind create cluster --name "${CLUSTER_ID}" --kubeconfig "${KUBECONFIG}"
+echo "  Creating the cluster ${CLUSTER_ID}. Version ${CLUSTER_VERSION}"
+kind create cluster --name "${CLUSTER_ID}" --kubeconfig "${KUBECONFIG}" --image registry.sighup.io/fury/kindest/node:"${CLUSTER_VERSION}"
 trap cleanup EXIT
-echo "  Loading the container image ${1} in the cluster ${CLUSTER_ID}"
-kind load docker-image --name "${CLUSTER_ID}" "${1}"
+echo "  Loading the container image ${CONTAINER_IMAGE} in the cluster ${CLUSTER_ID}"
+kind load docker-image --name "${CLUSTER_ID}" "${CONTAINER_IMAGE}"
 echo "  Waiting the cluster ${CLUSTER_ID} to become ready"
 kubectl --kubeconfig "${KUBECONFIG}" wait --timeout=180s --for=condition=ready pod --all -n kube-system
 echo "  Executing e2e tests"
-KUBECONFIG=$(pwd)/kubeconfig CONTAINER_IMAGE=${1} bats -t ./scripts/e2e/tests.sh
+KUBECONFIG=$(pwd)/kubeconfig CONTAINER_IMAGE=${CONTAINER_IMAGE} bats -t ./scripts/e2e/tests.sh
