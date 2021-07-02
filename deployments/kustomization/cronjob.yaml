@@ -18,7 +18,7 @@ spec:
           serviceAccountName: example-check
           containers:
           - name: example-check
-            image: registry.sighup.io/poc/example-check:latest
+            image: registry.sighup.io/poc/example-check:unstable
             imagePullPolicy: IfNotPresent
             envFrom:
               - configMapRef:
