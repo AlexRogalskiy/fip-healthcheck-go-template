@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: example-check
@@ -22,8 +22,8 @@ spec:
             runAsUser: 1001
           containers:
           - name: example-check
-            image: registry.sighup.io/poc/example-check:latest
-            imagePullPolicy: Always
+            image: registry.sighup.io/poc/example-check:unstable
+            imagePullPolicy: IfNotPresent
             envFrom:
               - configMapRef:
                   name: tbd-envs

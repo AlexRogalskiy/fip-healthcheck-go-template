@@ -21,7 +21,7 @@ optional-variable-%: # detection of undefined variables.
 check-%: # detection of required software.
 	@which ${*} > /dev/null || (echo '*** Please install `${*}` ***' && exit 1)
 
-## init: Init the project. GITHUB_PROJECT=demo
+## init: Init the project. GITHUB_PROJECT=demo make init
 init: check-variable-GITHUB_PROJECT
 	@test -f ./scripts/init.sh && ./scripts/init.sh ${GITHUB_PROJECT} || echo "Project already initialized with name ${GITHUB_PROJECT}"
 
@@ -49,9 +49,9 @@ test: check-docker
 license: check-docker
 	@docker build --no-cache --pull --target license -f build/builder/Dockerfile -t ${PROJECTNAME}:local-license .
 
-## e2e-test: Execute e2e-tests
-e2e-test: check-docker check-kind check-kubectl check-bats build-release
-	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release
+## e2e-test: Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
+e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl check-bats check-kustomize build-release
+	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release ${CLUSTER_VERSION}
 
 ## publish: Publish the container image
 publish: check-variable-REGISTRY check-variable-REGISTRY_USER check-variable-REGISTRY_PASSWORD check-variable-IMAGE_NAME check-variable-IMAGE_TAG check-docker build-release
