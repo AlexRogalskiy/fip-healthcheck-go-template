@@ -64,6 +64,7 @@ linters:
     - testpackage
     - whitespace
     - wsl
+    - revive
 
 linters-settings:
   gocyclo:
