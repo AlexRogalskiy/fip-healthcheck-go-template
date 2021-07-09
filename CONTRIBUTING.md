@@ -25,6 +25,7 @@ $ make
   license         Check license headers are in-place in all files in the project
   e2e-test        Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
   publish         Publish the container image
+  clean-%         Clean the container image resulting from another target. make build clean-build
 
 ```
 
@@ -183,6 +184,20 @@ In order to use this target you may need to specify a set of variables:
 ```bash
 REGISTRY_USER=angelbarrera92 IMAGE_TAG=latest IMAGE_NAME=sighupio/example-check REGISTRY_PASSWORD=supersuperrarepasswordeh REGISTRY=registry.sighup.io make publish
 ```
+
+### clean-%v
+
+The `clean-%v` target has been designed to remove the local built image resulting from the different targets in the
+[`Makefile`](Makefile).
+
+The main reason to implement this target is to save disk space.
+
+Example usages:
+
+- `make build clean-build`
+- `make lint clean-lint`
+- `make license clean-license`
+- `make test clean-test`
 
 ## Pipeline
 

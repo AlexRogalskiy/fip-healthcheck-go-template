@@ -56,3 +56,7 @@ e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl c
 ## publish: Publish the container image
 publish: check-variable-REGISTRY check-variable-REGISTRY_USER check-variable-REGISTRY_PASSWORD check-variable-IMAGE_NAME check-variable-IMAGE_TAG check-docker build-release
 	@./scripts/publish/run.sh ${PROJECTNAME}:local-build-release ${REGISTRY} ${REGISTRY_USER} ${REGISTRY_PASSWORD} ${IMAGE_NAME} ${IMAGE_TAG}
+
+## clean-%: Clean the container image resulting from another target. make build clean-build
+clean-%:
+	@docker rmi -f ${PROJECTNAME}:local-${*}

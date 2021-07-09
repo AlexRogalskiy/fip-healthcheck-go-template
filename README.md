@@ -51,6 +51,8 @@ $ make
   license         Check license headers are in-place in all files in the project
   e2e-test        Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
   publish         Publish the container image
+  clean-%         Clean the container image resulting from another target. make build clean-build
+
 ```
 
 All these make targets are also available in form of (drone) pipeline.
