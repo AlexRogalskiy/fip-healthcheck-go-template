@@ -36,7 +36,6 @@ linters:
   enable:
     - ineffassign
     - asciicheck
-    - exportloopref
     - dogsled
     - dupl
     - funlen
@@ -61,6 +60,7 @@ linters:
     - nlreturn
     - nolintlint
     - prealloc
+    - scopelint
     - testpackage
     - whitespace
     - wsl
