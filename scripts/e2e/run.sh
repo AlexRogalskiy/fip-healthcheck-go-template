@@ -21,5 +21,7 @@ echo "  Loading the container image ${CONTAINER_IMAGE} in the cluster ${CLUSTER_
 kind load docker-image --name "${CLUSTER_ID}" "${CONTAINER_IMAGE}"
 echo "  Waiting the cluster ${CLUSTER_ID} to become ready"
 kubectl --kubeconfig "${KUBECONFIG}" wait --timeout=180s --for=condition=ready pod --all -n kube-system
+echo "    Waiting for the default service account to mark the cluster ${CLUSTER_ID} ready"
+until kubectl --kubeconfig "${KUBECONFIG}" get serviceaccount default > /dev/null 2>&1; do echo "    Waiting" && sleep 2; done
 echo "  Executing e2e tests"
 KUBECONFIG=$(pwd)/kubeconfig CONTAINER_IMAGE=${CONTAINER_IMAGE} bats -t ./scripts/e2e/tests.sh
