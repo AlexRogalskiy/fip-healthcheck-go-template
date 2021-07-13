@@ -49,7 +49,7 @@ test: check-docker
 license: check-docker
 	@docker build --no-cache --pull --target license -f build/builder/Dockerfile -t ${PROJECTNAME}:local-license .
 
-## e2e-test: Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
+## e2e-test: Execute e2e-tests. CLUSTER_VERSION=v1.21.2 make e2e-test
 e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl check-bats check-kustomize build-release
 	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release ${CLUSTER_VERSION}
 

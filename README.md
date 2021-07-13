@@ -49,7 +49,7 @@ $ make
   build-release   Build the release container image
   test            Run unit testing
   license         Check license headers are in-place in all files in the project
-  e2e-test        Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
+  e2e-test        Execute e2e-tests. CLUSTER_VERSION=v1.21.2 make e2e-test
   publish         Publish the container image
   clean-%         Clean the container image resulting from another target. make build clean-build
 
