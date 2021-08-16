@@ -18,10 +18,13 @@ $ make
 
   init            Init the project. GITHUB_PROJECT=demo make init
   drone-init      Init the drone-project. GITHUB_PROJECT=demo GITHUB_TOKEN=123token321 DRONE_TOKEN=tokenhere REGISTRY=registry.sighup.io REGISTRY_USER=robotuser REGISTRY_PASSWORD=thepassword make drone-init
+  embedme         Run embedme to render and embed markdown files
+  render          Render the default kustomization project into the examples directory
   build           Build the container image
   lint            Run the policeman over the repository
   build-release   Build the release container image
   test            Run unit testing
+  add-license     Add license headers in all files in the project
   license         Check license headers are in-place in all files in the project
   e2e-test        Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
   publish         Publish the container image
@@ -55,6 +58,16 @@ Project already initialized with name demo-check
 It automates the configuration of the drone project with a single command, it requires a privilege token to run it.
 If you don't have it, read more about how to set up it manually
 [in the docs](https://github.com/sighupio/fip-healthcheck-go-template)
+
+### embedme
+
+This target runs the [embedme](https://github.com/zakhenry/embedme) utility to embed possible files in markdown files.
+The [`lint`](#lint) target checks if `embedme` has changes to do.
+
+### render
+
+This target (re)generates a couple of kubernetes manifests files from two different kustomize projects.
+Find the output of this target in the [examples](examples) directory.
 
 ### build
 
@@ -146,6 +159,11 @@ RUN mkdir /app
 ```
 
 Currently it executes `go test ./...` but feel free to modify with the right command.
+
+### add-license
+
+`add-license` target avoids you to have installed the [addlicense](https://github.com/google/addlicense) binary so
+it adds the license to every file using a specific container.
 
 ### license
 
