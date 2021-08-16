@@ -75,7 +75,7 @@ license: check-docker
 	@$(MAKE) clean-license
 
 ## e2e-test: Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
-e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl check-bats check-jq check-kustomize build-release
+e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl check-bats check-kustomize build-release
 	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release ${CLUSTER_VERSION}
 	@$(MAKE) clean-build-release
 

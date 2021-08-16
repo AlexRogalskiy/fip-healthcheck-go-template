@@ -12,7 +12,13 @@ $ kustomize build . | kubectl apply -f -
 
 The contents of the `kustomization` file are as follows:
 
+<!-- embedme kustomization.yaml -->
+
 ```yaml
+# Copyright (c) 2021 SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+#
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -21,7 +27,8 @@ resources:
   - cronjob.yaml
 configMapGenerator:
   - name: tbd-envs
-    env: .env
+    envs:
+      - env_template
 
 ```
 
@@ -71,9 +78,9 @@ to inject data into a pod.
 The environment variables necessary for the pod to execute are:
 
 ```yaml
-TND_SERVICE
-TND_NAMESPACE
-TND_MIN_EP
+TBD_SERVICE
+TBD_NAMESPACE
+TBD_MIN_EP
 ```
 
 Refer the [CLI usage guide for detailed review of
@@ -98,28 +105,18 @@ kustomize section is used:
 ``` yaml
 configMapGenerator:
 - name: tbd-envs
-  env: .env
+  envs:
+    - env_template
 ```
 
 Here a tbd-envs configMap Kubernetes resource is created from an environment
-file called `.env`. A template to this file is provided as a file
-`env_template`. The file has two keys defined with values left empty. So the
-first step would be to rename it as `.env` since that is what `kustomization`
-expects.
+file called `env_template`. The file has two keys defined with default values.
 
-``` yaml
-$ cp env_template .env
-$ cat .env
+<!-- embedme env_template -->
+
+```sh
 TBD_SERVICE=
 TBD_NAMESPACE=
 TBD_MIN_EP=
-```
 
-Add the values for the above 3 environment variables. An example could be:
-
-```yaml
-$ cat .env
-TBD_SERVICE=nginx
-TBD_NAMESPACE=dev
-TBD_MIN_EP=2
 ```
