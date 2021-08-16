@@ -60,3 +60,23 @@ publish: check-variable-REGISTRY check-variable-REGISTRY_USER check-variable-REG
 ## clean-%: Clean the container image resulting from another target. make build clean-build
 clean-%:
 	@docker rmi -f ${PROJECTNAME}:local-${*}
+
+npm-requirements: check-docker
+	@docker build --no-cache --pull --target npm-requirements -f build/builder/Dockerfile -t ${PROJECTNAME}:npm-requirements .
+
+requirements: check-docker
+	@docker build --no-cache --pull --target requirements -f build/builder/Dockerfile -t ${PROJECTNAME}:requirements .
+
+## embedme: Run embedme
+embedme: npm-requirements
+	@docker run --rm -v ${ROOT_DIR}:/app -w /app ${PROJECTNAME}:npm-requirements embedme "**/*.md"
+	@$(MAKE) add-license
+
+## add-license: Add license headers in all files in the project
+add-license: requirements
+	@docker run --rm -v ${ROOT_DIR}:/app -w /app ${PROJECTNAME}:requirements addlicense -c "SIGHUP s.r.l" -v -l bsd .
+
+## render: Render examples
+render: check-kustomize
+	@kustomize build deployments/kustomization > examples/rendered.yaml
+	@$(MAKE) add-license
