@@ -1,0 +1,72 @@
+# Copyright (c) 2021 SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: example-check
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: example-check
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: example-check
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: example-check
+subjects:
+- kind: ServiceAccount
+  name: example-check
+---
+apiVersion: v1
+data:
+  TBD_MIN_EP: ""
+  TBD_NAMESPACE: ""
+  TBD_SERVICE: ""
+kind: ConfigMap
+metadata:
+  name: tbd-envs-tdtgt687gm
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: example-check
+spec:
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - envFrom:
+            - configMapRef:
+                name: tbd-envs-tdtgt687gm
+            image: registry.sighup.io/poc/example-check:unstable
+            imagePullPolicy: IfNotPresent
+            name: example-check
+          restartPolicy: OnFailure
+          securityContext:
+            fsGroup: 999
+            runAsGroup: 999
+            runAsUser: 1001
+          serviceAccountName: example-check
+  schedule: '*/1 * * * *'
+  startingDeadlineSeconds: 10
+  successfulJobsHistoryLimit: 3
