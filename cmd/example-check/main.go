@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sighupio/fip-healthcheck-go-template/internal/config"
 	internal "github.com/sighupio/fip-healthcheck-go-template/internal/example-check"
 	pkg "github.com/sighupio/fip-healthcheck-go-template/pkg/example-check"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var logLevel string
+var cfg = &config.CheckConfig{}
 
 var rootCmd = &cobra.Command{
 	PersistentPreRunE: cmdConfig,
@@ -29,26 +30,26 @@ var rootCmd = &cobra.Command{
 }
 
 func cmdConfig(cmd *cobra.Command, args []string) error {
-	lvl, err := log.ParseLevel(logLevel)
+	lvl, err := log.ParseLevel(cfg.LogLevel)
 	if err != nil {
-		log.WithField("log-level", logLevel).Fatal("incorrect log level")
+		log.WithField("log-level", cfg.LogLevel).Fatal("incorrect log level")
 
 		return fmt.Errorf("incorrect log level")
 	}
 
 	log.SetLevel(lvl)
-	log.WithField("log-level", logLevel).Debug("log level configured")
+	log.WithField("log-level", cfg.LogLevel).Debug("log level configured")
 
 	return nil
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "info", "logging level (debug, info...)")
+	rootCmd.PersistentFlags().StringVar(&cfg.LogLevel, "log-level", "info", "logging level (debug, info...)")
 }
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.WithError(err).Fatal("error in the cli. Exiting")
 		os.Exit(1)
 	}
 }
