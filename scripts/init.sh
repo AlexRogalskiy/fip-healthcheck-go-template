@@ -30,6 +30,10 @@ mv internal/example-check internal/"${GITHUB_PROJECT}"
 mv pkg/example-check pkg/"${GITHUB_PROJECT}"
 echo "  Removing template docs"
 rm -rf docs/template
+echo "  Remove init target"
+${SED_BINARY} -i '/Init the project/d' Makefile
+${SED_BINARY} -i '/^init:.*/d' Makefile
+${SED_BINARY} -i '/\"Project already/d' Makefile
 echo "  Removing this script"
 rm -rf "${0}"
 

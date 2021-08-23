@@ -11,6 +11,17 @@ REGISTRY=${4}
 REGISTRY_USER=${5}
 REGISTRY_PASSWORD=${6}
 
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    SED_BINARY="sed"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_BINARY="gsed"
+else
+    echo "$OSTYPE Not supported"
+    exit 2
+fi
+
+which "${SED_BINARY}" > /dev/null || (echo "*** Please install ${SED_BINARY} ***" && exit 1)
+
 echo "Initializing repository for ${GITHUB_PROJECT}"
 echo " Configuring drone project @ ci.sighup.io"
 echo "  Waiting 30s to discover the newest repositories"
@@ -25,6 +36,8 @@ curl --fail -s -X POST -H "Content-Type: application/json" -H "Authorization: Be
 curl --fail -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${DRONE_TOKEN}" --data '{"name":"REGISTRY","data":"'"${REGISTRY}"'", "pull_request": false}' "https://ci.sighup.io/api/repos/${GITHUB_OWNER}/${GITHUB_PROJECT}/secrets"
 curl --fail -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${DRONE_TOKEN}" --data '{"name":"REGISTRY_USER","data":"'"${REGISTRY_USER}"'", "pull_request": false}' "https://ci.sighup.io/api/repos/${GITHUB_OWNER}/${GITHUB_PROJECT}/secrets"
 curl --fail -s -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${DRONE_TOKEN}" --data '{"name":"REGISTRY_PASSWORD","data":"'"${REGISTRY_PASSWORD}"'", "pull_request": false}' "https://ci.sighup.io/api/repos/${GITHUB_OWNER}/${GITHUB_PROJECT}/secrets"
+echo "  Remove drone-init target"
+${SED_BINARY} -i '/drone-init/d' Makefile
 echo "  Removing this script"
 rm -rf "${0}"
 

@@ -2,6 +2,14 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
+FROM golang:1.16 as requirements
+
+RUN go get -u github.com/google/addlicense
+
+FROM docker.io/library/node:14 as npm-requirements
+
+RUN npm install -g embedme@1.22.0
+
 # hadolint ignore=DL3007
 FROM quay.io/sighup/policeman:latest as linter
 
@@ -12,7 +20,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN /entrypoint.sh
+RUN npm install -g embedme@1.22.0 && /entrypoint.sh && embedme --verify "**/*.md"
 
 FROM golang:1.16 as license
 

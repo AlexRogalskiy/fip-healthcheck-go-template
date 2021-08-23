@@ -11,4 +11,4 @@ resources:
 configMapGenerator:
   - name: tbd-envs
     envs:
-      - .env
+      - env_template

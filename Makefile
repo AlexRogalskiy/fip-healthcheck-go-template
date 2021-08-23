@@ -2,6 +2,7 @@
 SHELL := /bin/bash
 
 PROJECTNAME := "fip-healthcheck-go-template"
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: help
 all: help
@@ -29,13 +30,31 @@ init: check-variable-GITHUB_PROJECT
 drone-init: check-variable-GITHUB_PROJECT check-variable-GITHUB_TOKEN check-variable-DRONE_TOKEN check-variable-REGISTRY check-variable-REGISTRY_USER check-variable-REGISTRY_PASSWORD
 	@test -f ./scripts/drone-init.sh && ./scripts/drone-init.sh ${GITHUB_PROJECT} ${GITHUB_TOKEN} ${DRONE_TOKEN} ${REGISTRY} ${REGISTRY_USER} ${REGISTRY_PASSWORD} || echo "Drone project already initialized with name ${GITHUB_PROJECT}"
 
+requirements: check-docker
+	@docker build --no-cache --pull --target requirements -f build/builder/Dockerfile -t ${PROJECTNAME}:requirements .
+
+npm-requirements: check-docker
+	@docker build --no-cache --pull --target npm-requirements -f build/builder/Dockerfile -t ${PROJECTNAME}:npm-requirements .
+
+## embedme: Run embedme to render and embed markdown files
+embedme: npm-requirements
+	@docker run --rm -v ${ROOT_DIR}:/app -w /app ${PROJECTNAME}:npm-requirements embedme "**/*.md"
+	@$(MAKE) add-license
+
+## render: Render the default kustomization project into the examples directory
+render: check-kustomize
+	@kustomize build deployments/kustomization > examples/rendered.yaml
+	@$(MAKE) add-license
+
 ## build: Build the container image
 build: check-docker
 	@docker build --no-cache --pull --target builder -f build/builder/Dockerfile -t ${PROJECTNAME}:local-build .
+	@$(MAKE) clean-build
 
 ## lint: Run the policeman over the repository
 lint: check-docker
 	@docker build --no-cache --pull --target linter -f build/builder/Dockerfile -t ${PROJECTNAME}:local-lint .
+	@$(MAKE) clean-lint
 
 ## build-release: Build the release container image
 build-release: check-docker
@@ -44,18 +63,26 @@ build-release: check-docker
 ## test: Run unit testing
 test: check-docker
 	@docker build --no-cache --pull --target tester -f build/builder/Dockerfile -t ${PROJECTNAME}:local-test .
+	@$(MAKE) clean-test
+
+## add-license: Add license headers in all files in the project
+add-license: requirements
+	@docker run --rm -v ${ROOT_DIR}:/app -w /app ${PROJECTNAME}:requirements addlicense -c "SIGHUP s.r.l" -v -l bsd .
 
 ## license: Check license headers are in-place in all files in the project
 license: check-docker
 	@docker build --no-cache --pull --target license -f build/builder/Dockerfile -t ${PROJECTNAME}:local-license .
+	@$(MAKE) clean-license
 
 ## e2e-test: Execute e2e-tests. CLUSTER_VERSION=v1.21.1 make e2e-test
 e2e-test: check-variable-CLUSTER_VERSION check-docker check-kind check-kubectl check-bats check-kustomize build-release
 	@./scripts/e2e/run.sh ${PROJECTNAME}:local-build-release ${CLUSTER_VERSION}
+	@$(MAKE) clean-build-release
 
 ## publish: Publish the container image
 publish: check-variable-REGISTRY check-variable-REGISTRY_USER check-variable-REGISTRY_PASSWORD check-variable-IMAGE_NAME check-variable-IMAGE_TAG check-docker build-release
 	@./scripts/publish/run.sh ${PROJECTNAME}:local-build-release ${REGISTRY} ${REGISTRY_USER} ${REGISTRY_PASSWORD} ${IMAGE_NAME} ${IMAGE_TAG}
+	@$(MAKE) clean-build-release
 
 ## clean-%: Clean the container image resulting from another target. make build clean-build
 clean-%:

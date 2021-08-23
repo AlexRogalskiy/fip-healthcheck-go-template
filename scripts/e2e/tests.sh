@@ -26,15 +26,6 @@ info(){
     [ "$status" -eq 0 ]
 }
 
-@test "Prepare deploy" {
-    info
-    prep(){
-        cp deployments/kustomization/env_template deployments/kustomization/.env
-    }
-    run prep
-    [ "$status" -eq 0 ]
-}
-
 @test "Deploy" {
     info
     deploy(){
