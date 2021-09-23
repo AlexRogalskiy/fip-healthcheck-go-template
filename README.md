@@ -67,7 +67,7 @@ Triggered by the `publish` target/pipeline step
 - **`REGISTRY_USER`**: User of the `REGISTRY`
 - **`REGISTRY_PASSWORD`**: Password for the `REGISTRY_USER` @ `REGISTRY`
 - **`GITHUB_TOKEN`**: GitHub personal access token with `public_repo` scope (for public repos),
-or `repo` scope (for private repos). This is in charge of publishing a new GitHub release.
+or `repo` scope (for private repos), generated using `C-3P0`'s user credentials(`engineering@sighup.io`) . This is in charge of publishing a new GitHub release.
 
 ![Configure pipeline](docs/template/configure-pipeline.png)
 
