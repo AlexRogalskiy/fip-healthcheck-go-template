@@ -75,6 +75,9 @@ This project has been developed using some awesome features from `docker`. With 
 [`Dockerfile`](build/builder/Dockerfile) you'll be able to `build` the project and [`test`](#test) it locally among
 other automation.
 
+> IMPORTANT: make sure to have buildkit enabled if you want faster builds.
+See the [relevant doc](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds) for more information.
+
 If you are adding more directories than the default ones to the project, you'll need to specify them in the
 [`Dockerfile`](build/builder/Dockerfile):
 

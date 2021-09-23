@@ -60,10 +60,12 @@ INFO[0000] Info message with flag-1=1 and flag-2=2
 
 ## Monitoring a remote cluster
 
-By default, the tool expects the Kuberentes cluster is present in the local and
-hence look for a kubeconfig `~/.kube/config`. To override this and connect to a
-remote cluster, one could use the flag `--KUBECONFIG` (or env var
-`SEC_KUBECONFIG` or provide in the config file being used under a key `KUBECONFIG`).
+By default, the tool expects the Kubernetes cluster is present locally and
+hence look for a kubeconfig at `~/.kube/config`. To override this and connect to a
+remote cluster you could use one of the following:
+- the `--KUBECONFIG` flag
+- set an env var named `SEC_KUBECONFIG`
+- provide the env var in the config file you are using by setting the `KUBECONFIG` key
 
 An example usage is:
 
