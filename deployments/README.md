@@ -12,6 +12,8 @@ injected via configmaps.
 
 ## Helm
 
+TBD
+
 ## Kustomize
 
 We ship the kustomization file along with jobs and RBAC resources needed to
@@ -22,3 +24,5 @@ can found in the [`README`](kustomization/README.md) of the `kustomization` dire
 Head over to [that doc](./kustomization/) for detailed deployment info.
 
 ## Manifests
+
+TBD
