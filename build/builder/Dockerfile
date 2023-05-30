@@ -6,7 +6,7 @@ FROM golang:1.16 as requirements
 
 RUN go get -u github.com/google/addlicense
 
-FROM docker.io/library/node:14 as npm-requirements
+FROM docker.io/library/node:20 as npm-requirements
 
 RUN npm install -g embedme@1.22.0
 
