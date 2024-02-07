@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-FROM golang:1.16 as requirements
+FROM golang:1.22 as requirements
 
 RUN go get -u github.com/google/addlicense
 
@@ -22,7 +22,7 @@ COPY . .
 
 RUN npm install -g embedme@1.22.0 && /entrypoint.sh && embedme --verify "**/*.md"
 
-FROM golang:1.16 as license
+FROM golang:1.22 as license
 
 RUN go get -u github.com/google/addlicense
 
@@ -33,7 +33,7 @@ COPY . .
 
 RUN addlicense -c "SIGHUP s.r.l" -v -l bsd --check .
 
-FROM golang:1.16 as tester
+FROM golang:1.22 as tester
 
 RUN mkdir /app
 WORKDIR /app
@@ -46,7 +46,7 @@ COPY internal internal
 
 RUN go test -v ./... -cover
 
-FROM golang:1.16 as builder
+FROM golang:1.22 as builder
 
 RUN mkdir /app
 WORKDIR /app
