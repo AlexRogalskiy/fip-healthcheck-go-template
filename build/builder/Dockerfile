@@ -60,7 +60,7 @@ COPY internal internal
 WORKDIR /app/cmd/example-check
 RUN go build
 
-FROM debian:buster as release
+FROM debian:buster-20240612 as release
 
 COPY --from=builder /app/cmd/example-check/example-check /example-check
 
